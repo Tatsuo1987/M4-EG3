@@ -3,15 +3,11 @@ export default class Empresa {
     #nombre;
     #rut;
     #importaciones = [];
-    #rubro;
-    #tamanno;
 
-    constructor(id, nombre, rut, rubro, tamanno){
+    constructor(id, nombre, rut){
         this.#id = id;
         this.#nombre = nombre;
         this.#rut = rut;
-        this.#rubro = rubro;
-        this.#tamanno = tamanno;
     }
 
     agregarImportaciones(importaciones){
