@@ -1,17 +1,10 @@
-import Empresa from "./class/empresa.js";
 import Importacion from "./class/importacion.js";
+import TipoImportador from "./class/tipoImportador.js";
 
 import rubros from './data/rubros.js';
 import tamannos from './data/tamannos.js';
 
-// let importacion1 = new Importacion(0, "zapato1", 12, 12000);
-// let importacion2 = new Importacion(1, "zapato2", 12, 12000);
-// let empresa1 = new Empresa(0, "empresa1", "12222222k");
-
-// empresa1.agregarImportaciones([importacion1, importacion2]);
-
 var Empresas=[
-    // empresa1,
 ];
 
 document.addEventListener("DOMContentLoaded", function (e) {
@@ -31,8 +24,8 @@ const listarSelect=()=>{
     let selTamanno=document.getElementById("EMP_TAMANNO");
     for(const [key, value] of Object.entries(rubros)){
         let newOpt=CreateElement("option",selRubro);
-        newOpt.textContent=value;
-        newOpt.value=value;
+        newOpt.textContent=key;
+        newOpt.value=key;
     }
     for(const [key, value] of Object.entries(tamannos)){
         let newOpt=CreateElement("option",selTamanno);
@@ -42,11 +35,13 @@ const listarSelect=()=>{
 };
 
 const _inEmpresa=()=>{
-    let formEmpresa=document.querySelectorAll("#formEmpresa input");
-    let empresa = new Empresa(
+    let formEmpresa=document.querySelectorAll("#formEmpresa .form-control");
+    let empresa = new TipoImportador(
         formEmpresa[0].value,
         formEmpresa[1].value,
-        formEmpresa[2].value
+        formEmpresa[2].value,
+        formEmpresa[3].value,
+        formEmpresa[4].value
     );
     Empresas.push(empresa);
 
@@ -57,7 +52,7 @@ const _inEmpresa=()=>{
     
     for (const empresa of Empresas) {
         let newOpt=CreateElement("option",selEmpresas);
-        newOpt.textContent=empresa.getNombre;
+        newOpt.textContent=`${empresa.getNombre} - ${empresa.rubro}`;
         newOpt.value=empresa.getId;
     }
 
@@ -68,15 +63,34 @@ const _inImportacion=()=>{
     let formImportacion=document.querySelectorAll("#formImportacion input");
     let selEmpresas=document.getElementById("IMP_EMPRESA");
     
-    let importacion= new Importacion(
-        Empresas[selEmpresas.value].getImportaciones.length,
-        formImportacion[0].value,
-        formImportacion[1].value,
-        formImportacion[2].value
-    );
-    Empresas[selEmpresas.value].agregarImportaciones([importacion]);
-    
-    listarEmpresas();
+    if(FiltrarImportaciones(formImportacion[0].value, Empresas[selEmpresas.value].rubro)){
+        let importacion= new Importacion(
+            Empresas[selEmpresas.value].getImportaciones.length,
+            formImportacion[0].value,
+            formImportacion[1].value,
+            formImportacion[2].value
+        );
+
+        Empresas[selEmpresas.value].agregarImportaciones([importacion]);
+  
+        listarEmpresas();
+        console.log(Empresas[selEmpresas.value]);
+    } 
+}
+
+function FiltrarImportaciones(input, rubro){
+    for (const prohibido of rubros[rubro][0]) {
+        if(input == prohibido){
+            alert("El producto no se puede importar");
+            return false;
+        }
+    }
+
+    if(rubros[rubro][1] == true){
+        alert("El producto requiere visaciones, certificaciones o vistos buenos para su importación");
+    }
+
+    return true;
 }
 
 const listarEmpresas=()=>{
@@ -85,7 +99,7 @@ const listarEmpresas=()=>{
 
     Empresas.forEach((empresa,indx)=>{
         let titulo=CreateElement('h2',listaEmpresas);
-            titulo.textContent=empresa.getNombre + " ";
+            titulo.textContent=`${empresa.getNombre} - ${empresa.rubro} `;
         let boton=CreateElement('button',titulo);
             boton.classList.add("btn","btn-sm","btn-success");
             boton.textContent="Detalles";

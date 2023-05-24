@@ -4,8 +4,8 @@ class TipoImportador extends Empresa{
     #rubro;
     #tamano;
 
-    constructor(rubro, tamano){
-        super();
+    constructor(id, nombre, rut, rubro, tamano){
+        super(id, nombre, rut);
         this.#rubro = rubro;
         this.#tamano = tamano;
     }
@@ -26,3 +26,5 @@ class TipoImportador extends Empresa{
         this.#tamano = tamano;
     }
 }
+
+export default TipoImportador;
